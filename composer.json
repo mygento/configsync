@@ -1,0 +1,37 @@
+{
+  "name": "mygento/module-configsync",
+  "description": "A module to store Magento configuration with multiple environments in the version control",
+  "type": "magento2-module",
+  "version": "2.2.0",
+  "license": "OSL-3.0",
+  "authors": [{
+    "name": "Nikita Tarasov",
+    "email": "nikita@mygento.ru"
+  }],
+  "keywords": [
+    "magento",
+    "mygento"
+  ],
+  "require": {
+
+  },
+  "require-dev": {
+    "mygento/coding-standard": "2.*",
+    "jakub-onderka/php-parallel-lint": "^0.9.2",
+    "jakub-onderka/php-console-highlighter": "^0.3.2"
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Mygento\\Configsync\\": ""
+    }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://repo.magento.com"
+    }
+  ]
+}

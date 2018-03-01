@@ -1,0 +1,18 @@
+language: php
+php:
+- 7.0
+- 7.1
+
+before_script:
+- sudo apt-get install libxml2-utils
+- composer self-update
+- echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
+- phpenv config-rm xdebug.ini
+- composer install --no-interaction --prefer-dist
+- php vendor/bin/phpcs --config-set ignore_warnings_on_exit 1
+
+script:
+- php vendor/bin/parallel-lint --exclude vendor .
+- find . -path ./vendor -prune -o -name '*.xml' -print | xargs xmllint --noout
+- php vendor/bin/phpcs .
+- php vendor/bin/phpmd . text vendor/mygento/coding-standard/Mygento-Mage2/phpmd.xml --exclude vendor
