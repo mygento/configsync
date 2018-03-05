@@ -35,7 +35,7 @@ Valid scope keys are:
 
 ## Usage
 
-    php bin/magento mygento:config_sync [options] [--] <env> <config_yaml_file>
+    php bin/magento setup:config:sync [options] [--] <env> <config_yaml_file>
     
  Arguments:
  * **env** - environment for import.
