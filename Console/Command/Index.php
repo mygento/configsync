@@ -24,7 +24,7 @@ class Index extends \Symfony\Component\Console\Command\Command
     protected function configure()
     {
         $this
-            ->setName('mygento:config_sync')
+            ->setName('setup:config:sync')
             ->setDescription('A module to store Magento configuration'
                 . 'with multiple environments in the version control')
             ->addArgument(
@@ -76,8 +76,8 @@ class Index extends \Symfony\Component\Console\Command\Command
                 ."For example the correct format:\r\n\r\n"
                 ."production:\r\n"
                 ."    default:\r\n"
-                ."        web/secure/base_url: 'https://domain.com/'\r\n"
-                ."        web/secure/use_in_frontend: '1'"
+                ."        web/secure/base_url: https://domain.com/\r\n"
+                ."        web/secure/use_in_frontend: 1"
             );
         }
         $totalValues = 0;

@@ -27,7 +27,6 @@
     ],
     "psr-4": {
       "Mygento\\Configsync\\": "",
-      "Symfony\\Component\\": ""
     }
   },
   "repositories": [
