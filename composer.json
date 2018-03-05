@@ -13,7 +13,8 @@
     "mygento"
   ],
   "require": {
-
+    "symfony/yaml": "3.*",
+    "magento/module-deploy": "100.2.*"
   },
   "require-dev": {
     "mygento/coding-standard": "2.*",
