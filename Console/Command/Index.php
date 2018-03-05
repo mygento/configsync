@@ -163,7 +163,7 @@ class Index extends \Symfony\Component\Console\Command\Command
 
     public static function extractFromScopeKey($scopeKey)
     {
-        $scopeKeyParts = explode("-", $scopeKey);
+        $scopeKeyParts = explode('-', $scopeKey);
         $scopeKeyPartsCount = count($scopeKeyParts);
 
         if ($scopeKeyPartsCount == 1) {
@@ -173,7 +173,7 @@ class Index extends \Symfony\Component\Console\Command\Command
             ];
         }
         return [
-            'scope'   => join("-", array_slice($scopeKeyParts, 0, $scopeKeyPartsCount - 1)),
+            'scope'   => join('-', array_slice($scopeKeyParts, 0, $scopeKeyPartsCount - 1)),
             'scopeId' => $scopeKeyParts[$scopeKeyPartsCount-1],
         ];
     }
