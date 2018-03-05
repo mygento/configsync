@@ -4,8 +4,8 @@ A module to store Magento configuration with multiple environments in the versio
 
 
 [![Build Status](https://travis-ci.org/mygento/configsync.svg?branch=m2)](https://travis-ci.org/mygento/configsync)
-[![Latest Stable Version](https://poser.pugx.org/mygento/configsync/v/stable)](https://packagist.org/packages/mygento/configsync)
-[![Total Downloads](https://poser.pugx.org/mygento/configsync/downloads)](https://packagist.org/packages/mygento/configsync)
+[![Latest Stable Version](https://poser.pugx.org/mygento/module-configsync/v/stable)](https://packagist.org/packages/mygento/module-configsync)
+[![Total Downloads](https://poser.pugx.org/mygento/module-configsync/downloads)](https://packagist.org/packages/mygento/module-configsync)
 
 ## File Syntax
 
@@ -36,10 +36,10 @@ Valid scope keys are:
 ## Usage
 
     php bin/magento setup:config:sync [options] [--] <env> <config_yaml_file>
-    
+
  Arguments:
  * **env** - environment for import.
  * **config_yaml_file** - the YAML file containing the configuration settings.
- 
+
  Options:
  * **--detailed** - display detailed information (1 - display, otherwise - not display).
