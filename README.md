@@ -6,3 +6,40 @@ A module to store Magento configuration with multiple environments in the versio
 [![Build Status](https://travis-ci.org/mygento/configsync.svg?branch=m2)](https://travis-ci.org/mygento/configsync)
 [![Latest Stable Version](https://poser.pugx.org/mygento/configsync/v/stable)](https://packagist.org/packages/mygento/configsync)
 [![Total Downloads](https://poser.pugx.org/mygento/configsync/downloads)](https://packagist.org/packages/mygento/configsync)
+
+## File Syntax
+
+The configuration values are stored in a YAML file.  The format of the file is as follows:
+
+    environment:
+        scope_key:
+           path: value
+
+For example:
+
+    production:
+        default:
+            web/secure/base_url: https://domain.com/
+            web/secure/use_in_frontend: 1
+    development:
+        default:
+            web/secure/base_url: https://domain1.com/
+        stores-1:
+            web/secure/use_in_frontend: 0
+
+Valid scope keys are:
+
+* default
+* stores-`$id`
+* websites-`$id`
+
+## Usage
+
+    php bin/magento mygento:config_sync [options] [--] <env> <config_yaml_file>
+    
+ Arguments:
+ * **env** - environment for import.
+ * **config_yaml_file** - the YAML file containing the configuration settings.
+ 
+ Options:
+ * **--detailed** - display detailed information (1 - display, otherwise - not display).
