@@ -2,11 +2,11 @@
 
 namespace Mygento\Configsync\Console\Command;
 
-class Index extends \Symfony\Component\Console\Command\Command
+class Sync extends \Symfony\Component\Console\Command\Command
 {
-    protected $configInterface;
-    protected $scopeConfig;
-    protected $yaml;
+    private $configInterface;
+    private $scopeConfig;
+    private $yaml;
     protected $output;
     protected $displayDiag;
 
@@ -25,7 +25,7 @@ class Index extends \Symfony\Component\Console\Command\Command
     {
         $this
             ->setName('setup:config:sync')
-            ->setDescription('A module to store Magento configuration'
+            ->setDescription('Sync Magento configuration'
                 . 'with multiple environments in the version control')
             ->addArgument(
                 'env',
@@ -58,7 +58,7 @@ class Index extends \Symfony\Component\Console\Command\Command
         if ($input->getOption('detailed') == '1') {
             $this->displayDiag = 1;
         }
-        
+
         $env = $input->getArgument('env');
         $yamlFile = $input->getArgument('config_yaml_file');
 
@@ -84,7 +84,11 @@ class Index extends \Symfony\Component\Console\Command\Command
         $importedValues = 0;
 
         if (!isset($envData[$env])) {
-            throw new \Exception('Environment "' . $env . '" doesn\'t exists.');
+            $output->writeln(
+                '<info>The environment doesn\'t exists in the file'
+                .'Nothing to import</info>'
+            );
+            return 0;
         }
         $scopeData = $envData[$env];
 
@@ -125,7 +129,6 @@ class Index extends \Symfony\Component\Console\Command\Command
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function isFileCorrect($envData)
     {
@@ -133,18 +136,18 @@ class Index extends \Symfony\Component\Console\Command\Command
             return false;
         }
 
-        foreach ($envData as $env => $scopeData) {
+        foreach ($envData as $scopeData) {
             if (!is_array($scopeData)) {
                 return false;
             }
 
-            foreach ($scopeData as $scopeKey => $data) {
+            foreach ($scopeData as $data) {
                 if (!is_array($data)) {
                     return false;
                 }
 
-                foreach ($data as $path => $value) {
-                    if (is_string($value) && is_numeric($value) && is_null($value)) {
+                foreach ($data as $value) {
+                    if ($value === null || (!is_string($value) && !is_numeric($value))) {
                         return false;
                     }
                 }

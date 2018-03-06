@@ -3,7 +3,7 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="config_sync" xsi:type="object">Mygento\Configsync\Console\Command\Index</item>
+                <item name="config_sync" xsi:type="object">Mygento\Configsync\Console\Command\Sync</item>
             </argument>
         </arguments>
     </type>
