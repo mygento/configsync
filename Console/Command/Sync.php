@@ -8,7 +8,6 @@ class Sync extends \Symfony\Component\Console\Command\Command
     private $scopeConfig;
     private $yaml;
     protected $output;
-    protected $displayDiag;
 
     public function __construct(
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface,
@@ -37,13 +36,6 @@ class Sync extends \Symfony\Component\Console\Command\Command
                 \Symfony\Component\Console\Input\InputArgument::REQUIRED,
                 'The YAML file containing the configuration settings.'
             )
-            ->addOption(
-                'detailed',
-                null,
-                \Symfony\Component\Console\Input\InputArgument::OPTIONAL,
-                'Display detailed information (1 - display, otherwise - not display).',
-                getcwd()
-            )
         ;
 
         parent::configure();
@@ -54,10 +46,6 @@ class Sync extends \Symfony\Component\Console\Command\Command
         \Symfony\Component\Console\Output\OutputInterface $output
     ) {
         $this->output = $output;
-
-        if ($input->getOption('detailed') == '1') {
-            $this->displayDiag = 1;
-        }
 
         $env = $input->getArgument('env');
         $yamlFile = $input->getArgument('config_yaml_file');
@@ -165,12 +153,10 @@ class Sync extends \Symfony\Component\Console\Command\Command
 
     public function diag($str)
     {
-        if ($this->displayDiag) {
-            $this->output->writeln(
-                $str,
-                \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE
-            );
-        }
+        $this->output->writeln(
+            $str,
+            \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE
+        );
     }
 
     public static function extractFromScopeKey($scopeKey)
