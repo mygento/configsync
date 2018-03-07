@@ -8,7 +8,6 @@ class Sync extends \Symfony\Component\Console\Command\Command
     private $scopeConfig;
     private $yaml;
     protected $output;
-    protected $displayDiag;
 
     public function __construct(
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface,
@@ -37,13 +36,6 @@ class Sync extends \Symfony\Component\Console\Command\Command
                 \Symfony\Component\Console\Input\InputArgument::REQUIRED,
                 'The YAML file containing the configuration settings.'
             )
-            ->addOption(
-                'detailed',
-                null,
-                \Symfony\Component\Console\Input\InputArgument::OPTIONAL,
-                'Display detailed information (1 - display, otherwise - not display).',
-                getcwd()
-            )
         ;
 
         parent::configure();
@@ -54,10 +46,6 @@ class Sync extends \Symfony\Component\Console\Command\Command
         \Symfony\Component\Console\Output\OutputInterface $output
     ) {
         $this->output = $output;
-
-        if ($input->getOption('detailed') == '1') {
-            $this->displayDiag = 1;
-        }
 
         $env = $input->getArgument('env');
         $yamlFile = $input->getArgument('config_yaml_file');
@@ -113,7 +101,13 @@ class Sync extends \Symfony\Component\Console\Command\Command
                 if ($currentValue != $newValue) {
                     $this->configInterface
                         ->saveConfig($path, $newValue, $scope, $scopeId);
-                    $this->diag('<question>New value: ' . $newValue . '</question>');
+                    $line = sprintf(
+                        "<info>[%s] %s -> %s</info>",
+                        $scopeKey,
+                        $path,
+                        $newValue ?: 'null'
+                    );
+                    $this->output->writeln($line);
                     $importedValues++;
                 }
                 $totalValues++;
@@ -121,8 +115,8 @@ class Sync extends \Symfony\Component\Console\Command\Command
             }
         }
 
-        $output->writeln('<info>Total config values: ' . $totalValues . '.</info>');
-        $output->writeln('<info>Imported: ' . $importedValues . '.</info>');
+        $this->diag('<info>Total config values: ' . $totalValues . '.</info>');
+        $this->diag('<info>Imported: ' . $importedValues . '.</info>');
 
         return 0;
     }
@@ -159,9 +153,10 @@ class Sync extends \Symfony\Component\Console\Command\Command
 
     public function diag($str)
     {
-        if ($this->displayDiag) {
-            $this->output->writeln($str);
-        }
+        $this->output->writeln(
+            $str,
+            \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE
+        );
     }
 
     public static function extractFromScopeKey($scopeKey)
