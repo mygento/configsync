@@ -4,6 +4,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="config_sync" xsi:type="object">Mygento\Configsync\Console\Command\Sync</item>
+                <item name="config_dump" xsi:type="object">Mygento\Configsync\Console\Command\Dump</item>
             </argument>
         </arguments>
     </type>
