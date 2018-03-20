@@ -2,8 +2,12 @@
 
 namespace Mygento\Configsync\Console\Command;
 
+use Symfony\Component\Console\Question\ChoiceQuestion;
+
 class Dump extends \Symfony\Component\Console\Command\Command
 {
+    const CONFIG_DIR = 'config';
+
     /**
      * @var \Magento\Framework\App\Config\ConfigResource\ConfigInterface
      */
@@ -15,14 +19,19 @@ class Dump extends \Symfony\Component\Console\Command\Command
     private $scopeConfig;
 
     /**
-     * @var \Symfony\Component\Yaml\Yaml
-     */
-    private $yaml;
-
-    /**
      * @var \Magento\Framework\Filesystem\DirectoryList
      */
     private $directoryList;
+
+    /**
+     * @var \Magento\Framework\Filesystem\Io\File
+     */
+    private $file;
+
+    /**
+     * @var \Symfony\Component\Yaml\Yaml
+     */
+    private $yaml;
 
     protected $output;
 
@@ -30,13 +39,15 @@ class Dump extends \Symfony\Component\Console\Command\Command
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Filesystem\DirectoryList $directoryList,
+        \Magento\Framework\Filesystem\Io\File $file,
         \Symfony\Component\Yaml\Yaml $yaml
     ) {
         parent::__construct();
         $this->configInterface = $configInterface;
-        $this->scopeConfig = $scopeConfig;
-        $this->yaml = $yaml;
-        $this->directoryList = $directoryList;
+        $this->scopeConfig     = $scopeConfig;
+        $this->directoryList   = $directoryList;
+        $this->file            = $file;
+        $this->yaml            = $yaml;
     }
 
     protected function configure()
@@ -53,6 +64,11 @@ class Dump extends \Symfony\Component\Console\Command\Command
                 'section',
                 \Symfony\Component\Console\Input\InputArgument::REQUIRED,
                 'Name of the section to export its config.'
+            )
+            ->addArgument(
+                'filename',
+                \Symfony\Component\Console\Input\InputArgument::OPTIONAL,
+                'Name of the output file (in the shop/config dir).'
             );
 
         parent::configure();
@@ -65,6 +81,7 @@ class Dump extends \Symfony\Component\Console\Command\Command
         $this->output = $output;
         $section      = $input->getArgument('section');
         $env          = $input->getArgument('env');
+        $filename     = $input->getArgument('filename');
 
         $this->output->writeln("<info>Starting dump. Section: {$section}. Env: {$env}</info>");
 
@@ -86,15 +103,32 @@ class Dump extends \Symfony\Component\Console\Command\Command
             $dump  = array_merge($dump, $group);
         }
 
-        $dump   = $this->yaml->dump(['default' => $dump]);
-        $body   = str_replace('    ', '        ', $dump);
-        $output = "$env: \r\n    $body";
+        $dump = $this->yaml->dump(['default' => $dump]);
+        $body = str_replace('    ', '        ', $dump);
+        $content = "$env: \r\n    $body";
+        $dir = $this->directoryList->getRoot() . DIRECTORY_SEPARATOR . self::CONFIG_DIR . DIRECTORY_SEPARATOR;
+        $filename = $filename ?? "{$section}_{$env}.yml";
 
-        $root     = $this->directoryList->getRoot();
-        $filename = "{$root}/config/{$section}_{$env}.yml";
+        $this->file->open(['path' => $dir]);
 
-        file_put_contents($filename, $output);
+        //Should we overwrite the file?
+        if ($this->file->fileExists($filename)) {
+            $helper   = $this->getHelper('question');
+            $question = new ChoiceQuestion(
+                'File already exists! Overwrite?',
+                ['y' => 'Yes', 'n' => 'No'],
+                'n'
+            );
+            $answer = $helper->ask($input, $output, $question);
 
+            if ($answer === 'n') {
+                $this->output->writeln('<error>Stop dumping.</error>');
+                return 0;
+            }
+            $this->output->writeln('<info>Trying to overwrite file...</info>');
+        }
+
+        $this->file->write($filename, $content);
         $this->output->writeln('<info>Done</info>');
 
         return 0;

@@ -45,10 +45,11 @@ Valid scope keys are:
  * **--detailed** - display detailed information (1 - display, otherwise - not display).
 
 #### Dump config
-    php bin/magento setup:config:dump [--] <env> <section>
+    php bin/magento setup:config:dump [--] <env> <section> <filename>
 
 Note: only `default` scope is implemented 
 
  Arguments:
  * **env** - environment name.
  * **section** - name of the section to export its config.
+ * **filename** - name of the output file (Optional).
