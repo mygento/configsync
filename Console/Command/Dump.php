@@ -106,7 +106,8 @@ class Dump extends \Symfony\Component\Console\Command\Command
         $dump = $this->yaml->dump(['default' => $dump]);
         $body = str_replace('    ', '        ', $dump);
         $content = "$env: \r\n    $body";
-        $dir = $this->directoryList->getRoot() . DIRECTORY_SEPARATOR . self::CONFIG_DIR . DIRECTORY_SEPARATOR;
+        $dir = $this->directoryList->getRoot() . DIRECTORY_SEPARATOR
+            . self::CONFIG_DIR . DIRECTORY_SEPARATOR;
         $filename = $filename ?? "{$section}_{$env}.yml";
 
         $this->file->open(['path' => $dir]);
