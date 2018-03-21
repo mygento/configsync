@@ -34,7 +34,7 @@ Valid scope keys are:
 * websites-`$id`
 
 ## Usage
-
+#### Sync config from file
     php bin/magento setup:config:sync [options] [--] <env> <config_yaml_file>
 
  Arguments:
@@ -43,3 +43,13 @@ Valid scope keys are:
 
  Options:
  * **--detailed** - display detailed information (1 - display, otherwise - not display).
+
+#### Dump config
+    php bin/magento setup:config:dump [--] <env> <section> <filename>
+
+Note: only `default` scope is implemented 
+
+ Arguments:
+ * **env** - environment name.
+ * **section** - name of the section to export its config.
+ * **filename** - name of the output file (Optional).
