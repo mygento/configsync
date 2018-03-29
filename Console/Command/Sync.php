@@ -41,49 +41,24 @@ class Sync extends \Symfony\Component\Console\Command\Command
         parent::configure();
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
     ) {
         $this->output = $output;
 
-        $env = $input->getArgument('env');
-        $yamlFile = $input->getArgument('config_yaml_file');
-
-        if (!file_exists($yamlFile)) {
-            throw new \Exception('File ' . $yamlFile . ' does not exists.');
-        }
-        if (!is_readable($yamlFile)) {
-            throw new \Exception('File ' . $yamlFile . ' is not readable.');
+        $envData = $this->getEnvData(
+            $input->getArgument('config_yaml_file'),
+            $input->getArgument('env')
+        );
+        if (!$envData) {
+            return 0;
         }
 
-        $envData = $this->yaml->parse(file_get_contents($yamlFile));
-        if (!$this->isFileCorrect($envData)) {
-            throw new \Exception(
-                "File format is incorrect.\r\n\r\n"
-                ."For example the correct format:\r\n\r\n"
-                ."production:\r\n"
-                ."    default:\r\n"
-                ."        web/secure/base_url: https://domain.com/\r\n"
-                ."        web/secure/use_in_frontend: 1"
-            );
-        }
         $totalValues = 0;
         $importedValues = 0;
 
-        if (!isset($envData[$env])) {
-            $output->writeln(
-                '<info>The environment doesn\'t exists in the file'
-                .'Nothing to import</info>'
-            );
-            return 0;
-        }
-        $scopeData = $envData[$env];
-
-        foreach ($scopeData as $scopeKey => $data) {
+        foreach ($envData as $scopeKey => $data) {
             if (!preg_match('/^(default|(website|stores)(-\d+)?)$/', $scopeKey)) {
                 $this->diag('<error>Skipped scope: ' . $scopeKey . '</error>');
                 continue;
@@ -127,6 +102,38 @@ class Sync extends \Symfony\Component\Console\Command\Command
         $this->diag('<info>Imported: ' . $importedValues . '.</info>');
 
         return 0;
+    }
+
+    public function getEnvData($yamlFile, $env)
+    {
+        if (!file_exists($yamlFile)) {
+            throw new \Exception('File ' . $yamlFile . ' does not exists.');
+        }
+        if (!is_readable($yamlFile)) {
+            throw new \Exception('File ' . $yamlFile . ' is not readable.');
+        }
+
+        $data = $this->yaml->parse(file_get_contents($yamlFile));
+        if (!$this->isFileCorrect($data)) {
+            throw new \Exception(
+                "File format is incorrect.\r\n\r\n"
+                ."For example the correct format:\r\n\r\n"
+                ."production:\r\n"
+                ."    default:\r\n"
+                ."        web/secure/base_url: https://domain.com/\r\n"
+                ."        web/secure/use_in_frontend: 1"
+            );
+        }
+
+        if (!isset($data[$env])) {
+            $this->output->writeln(
+                '<info>The environment doesn\'t exists in the file.'
+                .' Nothing to import</info>'
+            );
+            return 0;
+        }
+
+        return $data[$env];
     }
 
     /**
