@@ -59,7 +59,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
         $importedValues = 0;
 
         foreach ($envData as $scopeKey => $data) {
-            if (!preg_match('/^(default|(website|stores)(-\d+)?)$/', $scopeKey)) {
+            if (!preg_match('/^(default|(website|stores)-\d+)$/', $scopeKey)) {
                 $this->diag('<error>Skipped scope: ' . $scopeKey . '</error>');
                 continue;
             }
