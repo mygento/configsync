@@ -81,6 +81,11 @@ class Sync extends \Symfony\Component\Console\Command\Command
         $scopeData = $envData[$env];
 
         foreach ($scopeData as $scopeKey => $data) {
+            if (!preg_match('/^(default|(website|stores)(-\d+)?)$/', $scopeKey)) {
+                $this->diag('<error>Skipped scope: ' . $scopeKey . '</error>');
+                continue;
+            }
+
             $scopeKeyExtracted = $this->extractFromScopeKey($scopeKey);
             $scope = $scopeKeyExtracted['scope'];
             $scopeId = $scopeKeyExtracted['scopeId'];
