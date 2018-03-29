@@ -41,6 +41,9 @@ class Sync extends \Symfony\Component\Console\Command\Command
         parent::configure();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
