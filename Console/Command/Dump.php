@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @author Mygento Team
+ * @copyright 2017-2018 Mygento (https://www.mygento.ru)
+ * @package Mygento_Configsync
+ */
+
 namespace Mygento\Configsync\Console\Command;
 
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -28,26 +34,19 @@ class Dump extends \Symfony\Component\Console\Command\Command
      */
     private $file;
 
-    /**
-     * @var \Symfony\Component\Yaml\Yaml
-     */
-    private $yaml;
-
     protected $output;
 
     public function __construct(
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Filesystem\DirectoryList $directoryList,
-        \Magento\Framework\Filesystem\Io\File $file,
-        \Symfony\Component\Yaml\Yaml $yaml
+        \Magento\Framework\Filesystem\Io\File $file
     ) {
         parent::__construct();
         $this->configInterface = $configInterface;
         $this->scopeConfig     = $scopeConfig;
         $this->directoryList   = $directoryList;
         $this->file            = $file;
-        $this->yaml            = $yaml;
     }
 
     protected function configure()
@@ -103,7 +102,7 @@ class Dump extends \Symfony\Component\Console\Command\Command
             $dump  = array_merge($dump, $group);
         }
 
-        $dump = $this->yaml->dump(['default' => $dump]);
+        $dump = \Spyc::YAMLDump(['default' => $dump]);
         $body = str_replace('    ', '        ', $dump);
         $content = "$env: \r\n    $body";
         $dir = $this->directoryList->getRoot() . DIRECTORY_SEPARATOR

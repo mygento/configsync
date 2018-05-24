@@ -1,23 +1,34 @@
 <?php
 
+/**
+ * @author Mygento Team
+ * @copyright 2017-2018 Mygento (https://www.mygento.ru)
+ * @package Mygento_Configsync
+ */
+
 namespace Mygento\Configsync\Console\Command;
 
 class Sync extends \Symfony\Component\Console\Command\Command
 {
+    /**
+     * @var \Magento\Framework\App\Config\ConfigResource\ConfigInterface
+     */
     private $configInterface;
+
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
     private $scopeConfig;
-    private $yaml;
+
     protected $output;
 
     public function __construct(
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Symfony\Component\Yaml\Parser $yaml
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         parent::__construct();
         $this->configInterface = $configInterface;
         $this->scopeConfig = $scopeConfig;
-        $this->yaml = $yaml;
     }
 
     protected function configure()
@@ -35,8 +46,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
                 'config_yaml_file',
                 \Symfony\Component\Console\Input\InputArgument::REQUIRED,
                 'The YAML file containing the configuration settings.'
-            )
-        ;
+            );
 
         parent::configure();
     }
@@ -85,7 +95,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
                     $this->configInterface
                         ->saveConfig($path, $newValue, $scope, $scopeId);
                     $line = sprintf(
-                        "<info>[%s] %s -> %s</info>",
+                        '<info>[%s] %s -> %s</info>',
                         $scopeKey,
                         $path,
                         $newValue ?: 'null'
@@ -106,29 +116,31 @@ class Sync extends \Symfony\Component\Console\Command\Command
 
     public function getEnvData($yamlFile, $env)
     {
+        // @codingStandardsIgnoreLine
         if (!file_exists($yamlFile)) {
             throw new \Exception('File ' . $yamlFile . ' does not exists.');
         }
+        // @codingStandardsIgnoreLine
         if (!is_readable($yamlFile)) {
             throw new \Exception('File ' . $yamlFile . ' is not readable.');
         }
 
-        $data = $this->yaml->parse(file_get_contents($yamlFile));
+        $data = \Spyc::YAMLLoad($yamlFile);
         if (!$this->isFileCorrect($data)) {
             throw new \Exception(
                 "File format is incorrect.\r\n\r\n"
-                ."For example the correct format:\r\n\r\n"
-                ."production:\r\n"
-                ."    default:\r\n"
-                ."        web/secure/base_url: https://domain.com/\r\n"
-                ."        web/secure/use_in_frontend: 1"
+                . "For example the correct format:\r\n\r\n"
+                . "production:\r\n"
+                . "    default:\r\n"
+                . "        web/secure/base_url: https://domain.com/\r\n"
+                . '        web/secure/use_in_frontend: 1'
             );
         }
 
         if (!isset($data[$env])) {
             $this->output->writeln(
                 '<info>The environment doesn\'t exists in the file.'
-                .' Nothing to import</info>'
+                . ' Nothing to import</info>'
             );
             return 0;
         }
@@ -138,6 +150,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @param mixed $envData
      */
     public function isFileCorrect($envData)
     {
