@@ -34,8 +34,17 @@ class Dump extends \Symfony\Component\Console\Command\Command
      */
     private $file;
 
-    protected $output;
+    /**
+     * @var \Symfony\Component\Console\Output\OutputInterface
+     */
+    private $output;
 
+    /**
+     * @param \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param \Magento\Framework\Filesystem\DirectoryList $directoryList
+     * @param \Magento\Framework\Filesystem\Io\File $file
+     */
     public function __construct(
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -49,6 +58,9 @@ class Dump extends \Symfony\Component\Console\Command\Command
         $this->file            = $file;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function configure()
     {
         $this
@@ -73,6 +85,9 @@ class Dump extends \Symfony\Component\Console\Command\Command
         parent::configure();
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output

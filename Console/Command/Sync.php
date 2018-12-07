@@ -20,8 +20,15 @@ class Sync extends \Symfony\Component\Console\Command\Command
      */
     private $scopeConfig;
 
-    protected $output;
+    /**
+     * @var \Symfony\Component\Console\Output\OutputInterface
+     */
+    private $output;
 
+    /**
+     * @param \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     */
     public function __construct(
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -31,6 +38,9 @@ class Sync extends \Symfony\Component\Console\Command\Command
         $this->scopeConfig = $scopeConfig;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function configure()
     {
         $this
@@ -51,6 +61,9 @@ class Sync extends \Symfony\Component\Console\Command\Command
         parent::configure();
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
@@ -114,7 +127,12 @@ class Sync extends \Symfony\Component\Console\Command\Command
         return 0;
     }
 
-    public function getEnvData($yamlFile, $env)
+    /**
+     * @param string $yamlFile
+     * @param string $env
+     * @return array
+     */
+    private function getEnvData($yamlFile, $env)
     {
         // @codingStandardsIgnoreLine
         if (!file_exists($yamlFile)) {
@@ -151,8 +169,9 @@ class Sync extends \Symfony\Component\Console\Command\Command
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @param mixed $envData
+     * @return bool
      */
-    public function isFileCorrect($envData)
+    private function isFileCorrect($envData): bool
     {
         if (!is_array($envData)) {
             return false;
@@ -179,7 +198,10 @@ class Sync extends \Symfony\Component\Console\Command\Command
         return true;
     }
 
-    public function diag($str)
+    /**
+     * @param string $str
+     */
+    private function diag($str)
     {
         $this->output->writeln(
             $str,
@@ -187,7 +209,11 @@ class Sync extends \Symfony\Component\Console\Command\Command
         );
     }
 
-    public static function extractFromScopeKey($scopeKey)
+    /**
+     * @param string $scopeKey
+     * @return array
+     */
+    private function extractFromScopeKey($scopeKey): array
     {
         $scopeKeyParts = explode('-', $scopeKey);
         $scopeKeyPartsCount = count($scopeKeyParts);
