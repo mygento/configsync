@@ -184,7 +184,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
 
             foreach ($scopeData as $data) {
                 if (!is_array($data)) {
-                    return false;
+                    continue;
                 }
 
                 foreach ($data as $value) {
