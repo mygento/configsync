@@ -17,7 +17,7 @@
     "mustangostang/spyc": "^0.6.2"
   },
   "require-dev": {
-    "mygento/coding-standard": "^2.13.0"
+    "mygento/coding-standard": "^2.13.5"
   },
   "autoload": {
     "files": [

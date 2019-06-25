@@ -10,6 +10,8 @@ namespace Mygento\Configsync\Console\Command;
 
 class Sync extends \Symfony\Component\Console\Command\Command
 {
+    const DELETE = '%DELETE%';
+
     /**
      * @var \Magento\Framework\App\Config\ConfigResource\ConfigInterface
      */
@@ -102,6 +104,24 @@ class Sync extends \Symfony\Component\Console\Command\Command
                 );
                 $this->diag('Path: <comment>' . $path . '</comment>');
                 $this->diag('Current value: <comment>' . $currentValue . '</comment>');
+
+                if ($newValue === self::DELETE) {
+                    $this->configInterface->deleteConfig($path, $scope, $scopeId);
+                    $line = sprintf(
+                        '<info>[%s] %s -> DELETED</info>',
+                        $scopeKey,
+                        $path,
+                        $newValue ?: 'null'
+                    );
+
+                    $this->output->writeln($line);
+                    $importedValues++;
+
+                    $totalValues++;
+                    $this->diag('');
+
+                    continue;
+                }
 
                 //if has changes
                 if ($currentValue != $newValue) {

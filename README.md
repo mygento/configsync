@@ -3,9 +3,9 @@
 A module to store Magento configuration with multiple environments in the version control
 
 
-[![Build Status](https://travis-ci.org/mygento/configsync.svg?branch=v2.3)](https://travis-ci.org/mygento/configsync)
-[![Latest Stable Version](https://poser.pugx.org/mygento/module-configsync/v/stable)](https://packagist.org/packages/mygento/module-configsync)
-[![Total Downloads](https://poser.pugx.org/mygento/module-configsync/downloads)](https://packagist.org/packages/mygento/module-configsync)
+[![Build Status](https://travis-ci.com/mygento/configsync.svg?branch=v2.3)](https://travis-ci.com/mygento/configsync)
+[![Latest Stable Version](https://poser.pugx.com/mygento/module-configsync/v/stable)](https://packagist.com/packages/mygento/module-configsync)
+[![Total Downloads](https://poser.pugx.com/mygento/module-configsync/downloads)](https://packagist.com/packages/mygento/module-configsync)
 
 ## File Syntax
 
@@ -24,6 +24,7 @@ For example:
     development:
         default:
             web/secure/base_url: https://domain1.com/
+            admin/url/custom: %DELETE%
         stores-1:
             web/secure/use_in_frontend: 0
 
@@ -32,6 +33,9 @@ Valid scope keys are:
 * default
 * stores-`$id`
 * websites-`$id`
+
+
+Use ```%DELETE%``` to delete config path
 
 ## Usage
 #### Sync config from file
@@ -47,7 +51,7 @@ Valid scope keys are:
 #### Dump config
     php bin/magento setup:config:dump [--] <env> <section> <filename>
 
-Note: only `default` scope is implemented 
+Note: only `default` scope is implemented
 
  Arguments:
  * **env** - environment name.
