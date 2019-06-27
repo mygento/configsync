@@ -65,6 +65,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
 
     /**
      * @inheritdoc
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
@@ -105,7 +106,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
                 $this->diag('Path: <comment>' . $path . '</comment>');
                 $this->diag('Current value: <comment>' . $currentValue . '</comment>');
 
-                if ($newValue === self::DELETE) {
+                if ($currentValue && $newValue === self::DELETE) {
                     $this->configInterface->deleteConfig($path, $scope, $scopeId);
                     $line = sprintf(
                         '<info>[%s] %s -> DELETED</info>',
