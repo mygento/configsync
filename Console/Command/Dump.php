@@ -2,7 +2,7 @@
 
 /**
  * @author Mygento Team
- * @copyright 2017-2018 Mygento (https://www.mygento.ru)
+ * @copyright 2017-2019 Mygento (https://www.mygento.ru)
  * @package Mygento_Configsync
  */
 
@@ -53,9 +53,9 @@ class Dump extends \Symfony\Component\Console\Command\Command
     ) {
         parent::__construct();
         $this->configInterface = $configInterface;
-        $this->scopeConfig     = $scopeConfig;
-        $this->directoryList   = $directoryList;
-        $this->file            = $file;
+        $this->scopeConfig = $scopeConfig;
+        $this->directoryList = $directoryList;
+        $this->file = $file;
     }
 
     /**
@@ -93,9 +93,9 @@ class Dump extends \Symfony\Component\Console\Command\Command
         \Symfony\Component\Console\Output\OutputInterface $output
     ) {
         $this->output = $output;
-        $section      = $input->getArgument('section');
-        $env          = $input->getArgument('env');
-        $filename     = $input->getArgument('filename');
+        $section = $input->getArgument('section');
+        $env = $input->getArgument('env');
+        $filename = $input->getArgument('filename');
 
         $this->output->writeln("<info>Starting dump. Section: {$section}. Env: {$env}</info>");
 
@@ -108,18 +108,18 @@ class Dump extends \Symfony\Component\Console\Command\Command
         $dump = [];
         foreach ($conf as $index => $item) {
             $addPrefix = function ($key) use ($index, $section) {
-                return "$section/$index/$key";
+                return "${section}/${index}/${key}";
             };
-            $keys      = array_map($addPrefix, array_keys($item));
-            $values    = array_values($item);
+            $keys = array_map($addPrefix, array_keys($item));
+            $values = array_values($item);
 
             $group = array_combine($keys, $values);
-            $dump  = array_merge($dump, $group);
+            $dump = array_merge($dump, $group);
         }
 
         $dump = \Spyc::YAMLDump(['default' => $dump]);
         $body = str_replace('    ', '        ', $dump);
-        $content = "$env: \r\n    $body";
+        $content = "${env}: \r\n    ${body}";
         $dir = $this->directoryList->getRoot() . DIRECTORY_SEPARATOR
             . self::CONFIG_DIR . DIRECTORY_SEPARATOR;
         $filename = $filename ?? "{$section}_{$env}.yml";
@@ -128,7 +128,7 @@ class Dump extends \Symfony\Component\Console\Command\Command
 
         //Should we overwrite the file?
         if ($this->file->fileExists($filename)) {
-            $helper   = $this->getHelper('question');
+            $helper = $this->getHelper('question');
             $question = new ChoiceQuestion(
                 'File already exists! Overwrite?',
                 ['y' => 'Yes', 'n' => 'No'],
@@ -138,6 +138,7 @@ class Dump extends \Symfony\Component\Console\Command\Command
 
             if ($answer === 'n') {
                 $this->output->writeln('<error>Stop dumping.</error>');
+
                 return 0;
             }
             $this->output->writeln('<info>Trying to overwrite file...</info>');

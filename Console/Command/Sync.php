@@ -2,7 +2,7 @@
 
 /**
  * @author Mygento Team
- * @copyright 2017-2018 Mygento (https://www.mygento.ru)
+ * @copyright 2017-2019 Mygento (https://www.mygento.ru)
  * @package Mygento_Configsync
  */
 
@@ -94,17 +94,15 @@ class Sync extends \Symfony\Component\Console\Command\Command
             $scope = $scopeKeyExtracted['scope'];
             $scopeId = $scopeKeyExtracted['scopeId'];
 
-            $this->diag('<bg=cyan>Scope: ' . $scope . '</>');
-            $this->diag('<bg=cyan>Scope Id: ' . $scopeId . '</>');
+            $this->diag('<bg=yellow>Scope: ' . $scope . '</>');
+            $this->diag('<bg=yellow>Scope Id: ' . $scopeId . '</>');
             $this->diag('');
 
             foreach ($data as $path => $newValue) {
-                $currentValue = $this->scopeConfig->getValue(
-                    $path,
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-                );
+                $currentValue = $this->scopeConfig->getValue($path, $scope, $scopeId);
                 $this->diag('Path: <comment>' . $path . '</comment>');
                 $this->diag('Current value: <comment>' . $currentValue . '</comment>');
+                $this->diag('New value: <comment>' . $newValue . '</comment>');
 
                 if ($currentValue && $newValue === self::DELETE) {
                     $this->configInterface->deleteConfig($path, $scope, $scopeId);
@@ -125,7 +123,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
                 }
 
                 //if has changes
-                if ($currentValue != $newValue) {
+                if ($currentValue != $newValue && $newValue !== self::DELETE) {
                     $this->configInterface
                         ->saveConfig($path, $newValue, $scope, $scopeId);
                     $line = sprintf(
@@ -181,6 +179,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
                 '<info>The environment doesn\'t exists in the file.'
                 . ' Nothing to import</info>'
             );
+
             return 0;
         }
 
@@ -241,13 +240,14 @@ class Sync extends \Symfony\Component\Console\Command\Command
 
         if ($scopeKeyPartsCount == 1) {
             return [
-                'scope'   => $scopeKeyParts[0],
+                'scope' => $scopeKeyParts[0],
                 'scopeId' => 0,
             ];
         }
+
         return [
-            'scope'   => join('-', array_slice($scopeKeyParts, 0, $scopeKeyPartsCount - 1)),
-            'scopeId' => $scopeKeyParts[$scopeKeyPartsCount-1],
+            'scope' => join('-', array_slice($scopeKeyParts, 0, $scopeKeyPartsCount - 1)),
+            'scopeId' => $scopeKeyParts[$scopeKeyPartsCount - 1],
         ];
     }
 }
