@@ -3,7 +3,7 @@
 A module to store Magento configuration with multiple environments in the version control
 
 
-[![Build Status](https://travis-ci.com/mygento/configsync.svg?branch=v2.3)](https://travis-ci.com/mygento/configsync)
+[![Build Status](https://travis-ci.com/mygento/configsync.svg?branch=v2.2)](https://travis-ci.com/mygento/configsync)
 [![Latest Stable Version](https://poser.pugx.com/mygento/module-configsync/v/stable)](https://packagist.com/packages/mygento/module-configsync)
 [![Total Downloads](https://poser.pugx.com/mygento/module-configsync/downloads)](https://packagist.com/packages/mygento/module-configsync)
 
