@@ -25,6 +25,8 @@ For example:
         default:
             web/secure/base_url: https://domain1.com/
             admin/url/custom: %DELETE%
+        websites-1:
+            web/secure/use_in_frontend: 1
         stores-1:
             web/secure/use_in_frontend: 0
 
