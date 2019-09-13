@@ -99,7 +99,13 @@ class Sync extends \Symfony\Component\Console\Command\Command
             $this->diag('');
 
             foreach ($data as $path => $newValue) {
-                $currentValue = $this->scopeConfig->getValue($path, $scope, $scopeId);
+                try {
+                    $currentValue = $this->scopeConfig->getValue($path, $scope, $scopeId);
+                } catch (\Exception $e) {
+                    $this->diag('<info>' . $e->getMessage() . '</info>');
+                    continue;
+                }
+
                 $this->diag('Path: <comment>' . $path . '</comment>');
                 $this->diag('Current value: <comment>' . $currentValue . '</comment>');
                 $this->diag('New value: <comment>' . $newValue . '</comment>');
