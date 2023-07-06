@@ -109,7 +109,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
                         $scopeId = $this->storeManager->getWebsite($scopeId)->getId();
                     }
                     if ($scope === 'stores') {
-                        $scopeId = $this->storeManager->getWebsite($scopeId)->getId();
+                        $scopeId = $this->storeManager->getStore($scopeId)->getId();
                     }
                 }
             } catch (\Exception $e) {
