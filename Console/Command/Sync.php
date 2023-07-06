@@ -8,6 +8,8 @@
 
 namespace Mygento\Configsync\Console\Command;
 
+use Magento\Store\Model\StoreManagerInterface;
+
 class Sync extends \Symfony\Component\Console\Command\Command
 {
     const DELETE = '%DELETE%';
@@ -28,16 +30,23 @@ class Sync extends \Symfony\Component\Console\Command\Command
     private $output;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      */
     public function __construct(
+        StoreManagerInterface $storeManager,
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $configInterface,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         parent::__construct();
         $this->configInterface = $configInterface;
         $this->scopeConfig = $scopeConfig;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -85,7 +94,7 @@ class Sync extends \Symfony\Component\Console\Command\Command
         $importedValues = 0;
 
         foreach ($envData as $scopeKey => $data) {
-            if (!preg_match('/^(default|(websites|stores)-\d+)$/', $scopeKey)) {
+            if (!preg_match('/^(default|(websites|stores)-\w+)$/', $scopeKey)) {
                 $this->diag('<error>Skipped scope: ' . $scopeKey . '</error>');
                 continue;
             }
@@ -93,6 +102,21 @@ class Sync extends \Symfony\Component\Console\Command\Command
             $scopeKeyExtracted = $this->extractFromScopeKey($scopeKey);
             $scope = $scopeKeyExtracted['scope'];
             $scopeId = $scopeKeyExtracted['scopeId'];
+
+            try {
+                if (is_string($scopeId)) {
+                    if ($scope === 'websites') {
+                        $scopeId = $this->storeManager->getWebsite($scopeId)->getId();
+                    }
+                    if ($scope === 'stores') {
+                        $scopeId = $this->storeManager->getStore($scopeId)->getId();
+                    }
+                }
+            } catch (\Exception $e) {
+                $this->diag('<info>' . $e->getMessage() . '</info>');
+                continue;
+            }
+
 
             $this->diag('<bg=yellow>Scope: ' . $scope . '</>');
             $this->diag('<bg=yellow>Scope Id: ' . $scopeId . '</>');
@@ -105,7 +129,6 @@ class Sync extends \Symfony\Component\Console\Command\Command
                     $this->diag('<info>' . $e->getMessage() . '</info>');
                     continue;
                 }
-
                 $this->diag('Path: <comment>' . $path . '</comment>');
                 $this->diag('Current value: <comment>' . $currentValue . '</comment>');
                 $this->diag('New value: <comment>' . $newValue . '</comment>');

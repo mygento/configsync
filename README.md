@@ -29,12 +29,19 @@ For example:
             web/secure/use_in_frontend: 1
         stores-1:
             web/secure/use_in_frontend: 0
+        websites-us:
+            web/secure/use_in_frontend: 1
+        stores-us:
+            web/secure/use_in_frontend: 0
 
 Valid scope keys are:
 
 * default
 * stores-`$id`
 * websites-`$id`
+or
+* stores-`$code`
+* websites-`$code`
 
 
 Use ```%DELETE%``` to delete config path
