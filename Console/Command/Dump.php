@@ -108,7 +108,7 @@ class Dump extends \Symfony\Component\Console\Command\Command
         $dump = [];
         foreach ($conf as $index => $item) {
             $addPrefix = function ($key) use ($index, $section) {
-                return "${section}/${index}/${key}";
+                return "{$section}/{$index}/{$key}";
             };
             $keys = array_map($addPrefix, array_keys($item));
             $values = array_values($item);
@@ -119,7 +119,7 @@ class Dump extends \Symfony\Component\Console\Command\Command
 
         $dump = \Spyc::YAMLDump(['default' => $dump]);
         $body = str_replace('    ', '        ', $dump);
-        $content = "${env}: \r\n    ${body}";
+        $content = "{$env}: \r\n    {$body}";
         $dir = $this->directoryList->getRoot() . DIRECTORY_SEPARATOR
             . self::CONFIG_DIR . DIRECTORY_SEPARATOR;
         $filename = $filename ?? "{$section}_{$env}.yml";
